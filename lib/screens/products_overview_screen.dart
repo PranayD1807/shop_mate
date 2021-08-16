@@ -1,19 +1,65 @@
 import 'package:flutter/material.dart';
-import '../providers/product.dart';
-import '../widgets/product_item.dart';
+import 'package:provider/provider.dart';
+import '../widgets/badge.dart';
 import '../widgets/products_grid.dart';
+import '../providers/products.dart';
+import '../providers/cart.dart';
 
-class ProductsOverviewScreen extends StatelessWidget {
-  // dummy products
+enum FilterOptions {
+  Favourites,
+  All,
+}
 
+class ProductsOverviewScreen extends StatefulWidget {
+  @override
+  _ProductsOverviewScreenState createState() => _ProductsOverviewScreenState();
+}
+
+class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
+  var _showOnlyFavourites = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.pink[50],
       appBar: AppBar(
         title: Text('Shop-Mate'),
+        actions: <Widget>[
+          PopupMenuButton(
+            onSelected: (FilterOptions selectedvalue) {
+              setState(() {
+                if (selectedvalue == FilterOptions.Favourites) {
+                  _showOnlyFavourites = true;
+                } else {
+                  _showOnlyFavourites = false;
+                }
+              });
+            },
+            icon: Icon(Icons.more_vert),
+            itemBuilder: (_) => [
+              PopupMenuItem(
+                child: Text('Only Favourites'),
+                value: FilterOptions.Favourites,
+              ),
+              PopupMenuItem(
+                child: Text('Show ALL'),
+                value: FilterOptions.All,
+              ),
+            ],
+          ),
+          Consumer<Cart>(
+            builder: (_, cartData, ch) => Badge(
+              child: ch,
+              value: cartData.itemCount.toString(),
+            ),
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () {},
+            ),
+          )
+        ],
       ),
       //gridviwbuilder for optimization
-      body: ProductsGrid(),
+      body: ProductsGrid(_showOnlyFavourites),
     );
   }
 }
