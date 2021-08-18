@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/cart_item.dart';
 import '../providers/cart.dart' show Cart; // only imports cart from this file
+import '../providers/orders.dart';
 
 class CartScreen extends StatelessWidget {
   // const CartScreen({ Key? key }) : super(key: key);
@@ -39,10 +40,37 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  FlatButton(
-                    onPressed: () {},
+                  TextButton(
+                    onPressed: () {
+                      if (cart.itemCount != 0) {
+                        Provider.of<Orders>(context, listen: false).addOrder(
+                            cart.items.values.toList(), cart.totalAmount);
+                        final snackBar = SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Theme.of(context).accentColor,
+                            content: Text(
+                              'Order has been placed and will be delivered shortly.',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 15),
+                            ));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        cart.clear();
+                      } else {
+                        final snackBar = SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Theme.of(context).accentColor,
+                            content: Text(
+                              'No Items Found!',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 15),
+                            ));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    },
                     child: Text('Order Now'),
-                    textColor: Theme.of(context).primaryColor,
+                    // textColor: Theme.of(context).primaryColor,
                   ),
                 ],
               ),
