@@ -40,38 +40,7 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      if (cart.itemCount != 0) {
-                        Provider.of<Orders>(context, listen: false).addOrder(
-                            cart.items.values.toList(), cart.totalAmount);
-                        final snackBar = SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            duration: Duration(seconds: 2),
-                            backgroundColor: Theme.of(context).accentColor,
-                            content: Text(
-                              'Order has been placed and will be delivered shortly.',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ));
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        cart.clear();
-                      } else {
-                        final snackBar = SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            duration: Duration(seconds: 2),
-                            backgroundColor: Theme.of(context).accentColor,
-                            content: Text(
-                              'No Items Found!',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ));
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      }
-                    },
-                    child: Text('Order Now'),
-                    // textColor: Theme.of(context).primaryColor,
-                  ),
+                  OrderButton(cart: cart),
                 ],
               ),
             ),
@@ -92,6 +61,54 @@ class CartScreen extends StatelessWidget {
           ))
         ],
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key key,
+    @required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+
+  @override
+  _OrderButtonState createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isloading = false;
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: (widget.cart.totalAmount <= 0 || _isloading)
+          ? null
+          : () async {
+              setState(() {
+                _isloading = true;
+              });
+              await Provider.of<Orders>(context, listen: false).addOrder(
+                widget.cart.items.values.toList(),
+                widget.cart.totalAmount,
+              );
+              final snackBar = SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  duration: Duration(seconds: 2),
+                  backgroundColor: Theme.of(context).accentColor,
+                  content: Text(
+                    'Order has been placed and will be delivered shortly.',
+                    style: TextStyle(color: Colors.white, fontSize: 15),
+                  ));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              widget.cart.clear();
+              setState(() {
+                _isloading = false;
+              });
+            },
+
+      child: _isloading ? CircularProgressIndicator() : Text('Order Now'),
+      // textColor: Theme.of(context).primaryColor,
     );
   }
 }
