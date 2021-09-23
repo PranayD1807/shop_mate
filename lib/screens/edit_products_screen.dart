@@ -42,6 +42,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
 
   @override
   void didChangeDependencies() {
+    // ignore: todo
     // TODO: implement didChangeDependencies
     if (_isinit) {
       final productId = ModalRoute.of(context).settings.arguments as String;
@@ -156,7 +157,9 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Product'),
+        title: _editedProduct.id != null
+            ? Text('Edit Product')
+            : Text('Add Product'),
         actions: <Widget>[
           IconButton(icon: Icon(Icons.save), onPressed: _saveForm)
         ],
@@ -266,7 +269,12 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                           decoration: BoxDecoration(
                               border: Border.all(width: 1, color: Colors.red)),
                           child: _imageUrlController.text.isEmpty
-                              ? Text('Null')
+                              ? Center(
+                                  child: Text(
+                                    'No image found',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )
                               : FittedBox(
                                   child: Image.network(
                                     _imageUrlController.text,

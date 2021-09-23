@@ -6,8 +6,6 @@ import '../widgets/products_grid.dart';
 import '../providers/products.dart';
 import '../providers/cart.dart';
 import './cart_screen.dart';
-import 'package:provider/provider.dart';
-import '../providers/products.dart';
 
 enum FilterOptions {
   Favourites,
@@ -44,6 +42,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       });
     }
     _isInit = false;
+    // ignore: todo
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }

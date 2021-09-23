@@ -95,7 +95,7 @@ class _OrderButtonState extends State<OrderButton> {
               final snackBar = SnackBar(
                   behavior: SnackBarBehavior.floating,
                   duration: Duration(seconds: 2),
-                  backgroundColor: Theme.of(context).accentColor,
+                  backgroundColor: Colors.pink[800],
                   content: Text(
                     'Order has been placed and will be delivered shortly.',
                     style: TextStyle(color: Colors.white, fontSize: 15),

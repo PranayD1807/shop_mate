@@ -1,6 +1,5 @@
-import 'dart:ffi';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_mate/providers/auth.dart';
 import '../providers/product.dart';
 import '../screens/product_detail_screen.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +18,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context);
     final cart = Provider.of<Cart>(context, listen: false);
+    final authData = Provider.of<Auth>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -44,11 +44,11 @@ class ProductItem extends StatelessWidget {
         footer: GridTileBar(
           backgroundColor: Colors.black.withOpacity(0.4),
           leading: IconButton(
-            color: Theme.of(context).accentColor,
+            color: Colors.pink[400],
             icon: Icon(
                 product.isFavourite ? Icons.favorite : Icons.favorite_border),
             onPressed: () {
-              product.toggleFavouriteStatus();
+              product.toggleFavouriteStatus(authData.token, authData.userId);
             },
           ),
           title: Text(
@@ -59,7 +59,7 @@ class ProductItem extends StatelessWidget {
             // textWidthBasis: TextWidthBasis.longestLine,
           ),
           trailing: IconButton(
-            icon: Icon(Icons.shopping_cart),
+            icon: Icon(Icons.shopping_cart_outlined),
             onPressed: () {
               cart.addItem(product.id, product.price, product.title);
               final snackBar = SnackBar(
@@ -72,7 +72,7 @@ class ProductItem extends StatelessWidget {
                       cart.removeSingleItem(product.id);
                     },
                   ),
-                  backgroundColor: Theme.of(context).accentColor,
+                  backgroundColor: Colors.pink[500],
                   content: Text(
                     product.title + ' added to the cart',
                     style: TextStyle(color: Colors.white, fontSize: 15),
@@ -80,7 +80,7 @@ class ProductItem extends StatelessWidget {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             },
-            color: Theme.of(context).accentColor,
+            color: Colors.pink[400],
           ),
         ),
       ),

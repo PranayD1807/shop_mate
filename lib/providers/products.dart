@@ -7,6 +7,9 @@ import 'product.dart';
 import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
+  final String authToken;
+  final String userId;
+  Products(this.authToken, this.userId, this._items);
   List<Product> _items = [
     // Product(
     //   id: 'p1',
@@ -68,16 +71,22 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   //   _showFavouritesOnly = false;
   // }
-
-  Future<void> fetchAndSetProduct() async {
+//filter by user is false by default, we do this, to pass whether to filter products or not
+  Future<void> fetchAndSetProduct([bool filterByUser = false]) async {
+    var filterString =
+        filterByUser ? 'orderBy="createrId"&equalTo="$userId"' : '';
     final url = Uri.parse(
-        'https://shopmate-88-default-rtdb.asia-southeast1.firebasedatabase.app/products.json');
+        'https://shopmate-88-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken&$filterString');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if (extractedData == null) {
         return;
       }
+      final userfavourites = Uri.parse(
+          'https://shopmate-88-default-rtdb.asia-southeast1.firebasedatabase.app/userFavourites/$userId.json?auth=$authToken');
+      final favouriteResponse = await http.get(userfavourites);
+      final favouriteData = json.decode(favouriteResponse.body);
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -86,10 +95,12 @@ class Products with ChangeNotifier {
           description: prodData['description'],
           price: prodData['price'],
           imageUrl: prodData['imageUrl'],
-          isFavourite: prodData['isFavourite'],
+          isFavourite:
+              favouriteData == null ? false : favouriteData[prodId] ?? false,
         ));
       });
-      _items = loadedProducts;
+      _items = loadedProducts.reversed.toList();
+      // _items = _items.reversed;
       notifyListeners();
     } catch (error) {
       throw (error);
@@ -98,7 +109,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final url = Uri.parse(
-        'https://shopmate-88-default-rtdb.asia-southeast1.firebasedatabase.app/products.json');
+        'https://shopmate-88-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken');
     try {
       final response = await http.post(
         url,
@@ -107,7 +118,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavourite': product.isFavourite,
+          'createrId': userId,
         }),
       );
       final newProduct = Product(
@@ -131,7 +142,7 @@ class Products with ChangeNotifier {
 
     if (prodIndex >= 0) {
       final url = Uri.parse(
-          'https://shopmate-88-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json');
+          'https://shopmate-88-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$authToken');
       try {
         await http
             .patch(url,
@@ -158,7 +169,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url = Uri.parse(
-        'https://shopmate-88-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json');
+        'https://shopmate-88-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$authToken');
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
     final response = await http.delete(url);

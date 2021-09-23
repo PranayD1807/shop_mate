@@ -62,7 +62,7 @@ class AuthScreen extends StatelessWidget {
                       child: Text(
                         'Shop-Mate',
                         style: TextStyle(
-                          color: Theme.of(context).accentTextTheme.title.color,
+                          color: Colors.white,
                           fontSize: 45,
                           fontFamily: 'Anton',
                           fontWeight: FontWeight.normal,
@@ -109,6 +109,7 @@ class _AuthCardState extends State<AuthCard> {
               title: Text('An error Occured!'),
               content: Text(message),
               actions: <Widget>[
+                // ignore: deprecated_member_use
                 FlatButton(
                     child: Text('Okay!'),
                     onPressed: () {
@@ -244,6 +245,7 @@ class _AuthCardState extends State<AuthCard> {
                 if (_isLoading)
                   CircularProgressIndicator()
                 else
+                  // ignore: deprecated_member_use
                   RaisedButton(
                     child:
                         Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
@@ -256,6 +258,7 @@ class _AuthCardState extends State<AuthCard> {
                     color: Theme.of(context).primaryColor,
                     textColor: Theme.of(context).primaryTextTheme.button.color,
                   ),
+                // ignore: deprecated_member_use
                 FlatButton(
                   child: Text(
                       '${_authMode == AuthMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD'),
