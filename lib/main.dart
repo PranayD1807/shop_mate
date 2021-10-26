@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_mate/helpers/custom_route.dart';
 import 'package:shop_mate/providers/auth.dart';
 import 'package:shop_mate/providers/orders.dart';
 import 'package:shop_mate/screens/splash_screen.dart';
@@ -49,9 +50,16 @@ class MyApp extends StatelessWidget {
           builder: (ctx, auth, _) => MaterialApp(
             title: 'Shop-Mate',
             theme: ThemeData(
-                primarySwatch: Colors.pink,
-                // accentColor: Colors.redAccent[800],
-                fontFamily: 'Lato'),
+              primarySwatch: Colors.pink,
+              // accentColor: Colors.redAccent[800],
+              fontFamily: 'Lato',
+              pageTransitionsTheme: PageTransitionsTheme(
+                builders: {
+                  TargetPlatform.android: CustomPageTransitionBuilder(),
+                  TargetPlatform.iOS: CustomPageTransitionBuilder(),
+                },
+              ),
+            ),
             home: auth.isAuth
                 ? ProductsOverviewScreen()
                 : FutureBuilder(
