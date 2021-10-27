@@ -49,7 +49,7 @@ class ProductDetailsScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               SizedBox(
-                height: 800,
+                height: 10,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -58,7 +58,10 @@ class ProductDetailsScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                   softWrap: true,
                 ),
-              )
+              ),
+              SizedBox(
+                height: 1000,
+              ),
             ]),
           ),
         ],
